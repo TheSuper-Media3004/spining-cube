@@ -14,9 +14,6 @@ int main(int argc, char const *argv[])
   {
     fill(buffer, buffer + AREA, BACKGROUND_ASCII_CODE);
     memset(z_buffer, 0, AREA * 4);
-    // TODO: Use fill() instead of memset(). fill(z_buffer, z_buffer + AREA * 4, 0);
-
-    // Looping through X
     for (float cube_x = -CUBE_WIDTH; cube_x < CUBE_WIDTH; cube_x += INCREMENT_SPEED)
     {
       // Looping through Y
@@ -60,30 +57,17 @@ float calculateZ(int i, int j, int k)
 
 void calculateForSurface(float cube_x, float cube_y, float cube_z, int ch)
 {
-  // ***** Rotated Coordinate Calculation *****
-  // x, y, and z are updated by calculating the rotated coordinates of the point in three-dimensional space.
-  // These coordinates are obtained by calling the functions calculateX, calculateY, and calculateZ.
   x = calculateX(cube_x, cube_y, cube_z);
   y = calculateY(cube_x, cube_y, cube_z);
   z = calculateZ(cube_x, cube_y, cube_z) + DISTANCE_FROM_CAM;
 
-  // ***** Projected Coordinate Calculation *****
-  // ooz is calculated as the inverse of the z-coordinate (1/z). This is used to take into account
-  // perspective and adjust the position of the point according to its distance from the camera.
   ooz = 1 / z;
 
-  // xp and yp are calculated as the projected coordinates on the screen. The formula takes into account
-  // the scale factor K1, the inverse of the z-coordinate, and the rotated coordinates.
   xp = (int)(WIDTH / 2 + K1 * ooz * x * 2);
   yp = (int)(HEIGHT / 2 + K1 * ooz * y);
 
-  // ***** Z-Buffer and Buffer Update *****
-  // It is calculated as the index in the z_buffer and buffer arrays corresponding to the position on the screen where a point is to be drawn.
   idx_buffer = xp + yp * WIDTH;
 
-  // The index is checked to see if it is within the array limits.
-  // If so, the value of ooz is compared to the existing value in the z-buffer for that position.
-  // If ooz is greater, the z-buffer is updated and the ch character is placed in the buffer at that position.
   if (idx_buffer >= 0 && idx_buffer < AREA)
   {
     if (ooz > z_buffer[idx_buffer])
